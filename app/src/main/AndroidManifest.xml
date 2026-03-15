@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- ✅ Permissions go HERE -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:name=".MyApp"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.RWelocme">
+        <activity
+            android:name=".activity.UpdateProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.CreateFamilyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.FamilyCreateJoinActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.AsFeedbackActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.AsFeedBackActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.JoinAnAgencyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.AsCustomerService"
+            android:exported="false" />
+        <activity
+            android:name=".activity.AsAccountBindingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.AsBlockListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.AsGiftsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.AsFriendsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.AsChangePasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.AsSettingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.CoupleRankingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.FamilyRankingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.UserRankingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.AsRoomChatActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.CreateRoomActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.CreatePassword"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.CreateAccount"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ForgotPassword"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.OtpVerificationActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.SignInWithOtpActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.AsSignInActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.RWelocme" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.AsSplashActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="true"
+            android:theme="@style/Theme.RWelocme.Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

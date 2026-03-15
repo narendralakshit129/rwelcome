@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="gray">#000000</color>
+    <color name="transparent">#00000000</color>
+
+    <color name="yofoodie_source_color">#939D6B</color>
+    <color name="table_bg_for_view">#f4f5f0</color>
+    <color name="k_print_buttom">#1A2022</color>
+    <color name="combineOrderTxtColor">#0353F4</color>
+    <color name="blue">#03A9F4</color>
+    <color name="blue_l">#63C9F8</color>
+    <color name="blue_light">#CFF3FC</color>
+    <color name="combineOrderbgColor">#D9F2F5</color>
+    <color name="colorGray_table">#888888</color>
+    <color name="colorGray_add_table">#585858</color>
+    <color name="colorGrayhint">#7d7d7d</color>
+    <color name="colorGrayhint1">#667D7D7D</color>
+    <color name="colorAntiqueDeep">#FAEBD7</color>
+    <color name="black_overlay">#ffffff</color>
+    <color name="light_gray">#E8E9EB</color>
+    <color name="light_gray_new">#d9d9da</color>
+    <color name="tranparent_black">#C0000000</color>
+</resources>

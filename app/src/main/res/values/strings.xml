@@ -1,0 +1,64 @@
+<resources>
+    <string name="app_name">RWelocme</string>
+    <string name="txt_sign_in">Sign In</string>
+    <string name="txt_mobile_no">Mobile Number</string>
+    <string name="txt_password">Password</string>
+    <string name="txt_sign_in_with_otp">Sign In with OTP</string>
+    <string name="txt_have_a_password">Have a password?</string>
+    <string name="txt_send_otp">Send OTP</string>
+    <string name="txt_otp_verification">OTP Verification</string>
+    <string name="txt_submit">Submit</string>
+    <string name="txt_resend">Resend</string>
+    <string name="txt_forgot_password">Forgot password?</string>
+    <string name="txt_back_to_login">Back to login</string>
+    <string name="txt_next">Next</string>
+    <string name="txt_create_account">Create Account</string>
+    <string name="txt_full_name">Full Name</string>
+    <string name="txt_gender">Gender</string>
+    <string name="txt_male">Male</string>
+    <string name="txt_female">Female</string>
+    <string name="txt_nationality">Nationality</string>
+    <string name="txt_enter_your_bio">Enter Your Bio</string>
+    <string name="txt_create_profile">Create Profile</string>
+    <string name="txt_create_password">Create Password</string>
+
+    <string name="txt_create_room">Create Room</string>
+    <string name="txt_room_name">Room Name</string>
+    <string name="txt_enter_room_bio">Enter Room Bio</string>
+    <string name="txt_room_type">Room Type</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="txt_couple_ranking">Couple Ranking</string>
+    <string name="txt_user_ranking">User Ranking</string>
+    <string name="txt_family_ranking">Family Ranking</string>
+
+
+    <string name="txt_setting">Setting</string>
+    <string name="txt_reset_password">Reset Password</string>
+    <string name="txt_friends">Friends</string>
+    <string name="txt_gifts">Gifts</string>
+    <string name="txt_block_list">Block List</string>
+    <string name="txt_account_binding">Account Binding</string>
+    <string name="txt_customer_service">Customer Service</string>
+    <string name="txt_join_an_agency">Join An Agency</string>
+    <string name="txt_feedback">Feedback</string>
+    <string name="txt_family">Family</string>
+
+    <string name="create_new_family">Create New Family</string>
+    <string name="join_other_family">Join Other Family</string>
+    <string name="family_id_hint">Family ID 2125834</string>
+    <string name="search">search room or join ither family </string>
+    <string name="back">back click</string>
+    <string name="family_name">Family Name</string>
+    <string name="family_name_bio">Enter Family Bio</string>
+    <string name="create_family">Create Family</string>
+    <string name="add_family_image">family room image</string>
+    <string name="update_profile_image">update profile image</string>
+    <string name="update_profile">Update Profile</string>
+    <string name="full_name">Full Name</string>
+
+    create_new_family
+
+
+</resources>

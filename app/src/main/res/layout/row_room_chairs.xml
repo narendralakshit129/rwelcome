@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <!-- Icon Circle -->
+    <FrameLayout
+        android:id="@+id/ic_chair"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:background="@drawable/chire_circle_bg"
+        android:gravity="center">
+
+        <ImageView
+            android:scaleType="fitCenter"
+            android:id="@+id/ivIcon"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_chair" />
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/txt_chair_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="5dp"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:text="1"
+        android:textColor="@color/white"
+        android:textSize="14sp" />
+
+</LinearLayout>
+
