@@ -37,42 +37,58 @@ class SignInWithOtpActivity : AppCompatActivity() {
 
         etMobile = findViewById(R.id.et_mobile)
         ccp = findViewById(R.id.ccp)
+        ccp.registerCarrierNumberEditText(etMobile)
+        ccp.setOnCountryChangeListener {
+            etMobile.setText("")
+        }
 
         btnSendOtp = findViewById(R.id.btn_send_otp)
         tvHavePassword = findViewById(R.id.txt_have_password)
 
         btnSendOtp.setOnClickListener {
 
+            if (!ccp.isValidFullNumber) {
+                etMobile.error = "Invalid phone number"
+                return@setOnClickListener
+            }
+
+            val mobileNumber = ccp.fullNumberWithPlus
+
+            viewModel.requestOtp(mobileNumber)
+        }
 
 
-            lifecycleScope.launch {
 
-                viewModel.otpState.collect { result ->
+        lifecycleScope.launch {
 
-                    when (result) {
+            viewModel.otpState.collect { result ->
 
-                        is NetworkResult.Loading -> {
-                            Log.d("API", "Loading")
-                        }
+                when (result) {
 
-                        is NetworkResult.Success -> {
-                            Log.d("API", "Success: ${result.data}")
-                            val intent = Intent(this@SignInWithOtpActivity, OtpVerificationActivity::class.java)
-                            intent.putExtra("KEY_COMMING_FROM", "SIGN_IN_OTP")
-                            startActivity(intent)
-                            finish()
-                        }
+                    is NetworkResult.Loading -> {
+                        Log.d("API", "Loading")
+                    }
 
-                        is NetworkResult.Error -> {
-                            Log.d("API", "Error: ${result.message}")
-                        }
+                    is NetworkResult.Success -> {
+                        Log.d("API", "Success: ${result.data}")
+                        val intent = Intent(
+                            this@SignInWithOtpActivity,
+                            OtpVerificationActivity::class.java
+                        )
+                        intent.putExtra("KEY_COMMING_FROM", "SIGN_IN_OTP")
+                        intent.putExtra("KEY_MOBILE_NUMBER", ccp.fullNumberWithPlus)
+                        startActivity(intent)
+                        finish()
+                    }
+
+                    is NetworkResult.Error -> {
+                        Log.d("API", "Error: ${result.message}")
                     }
                 }
             }
-
-            viewModel.requestOtp("+919599781020")
-
         }
+
+
 
         tvHavePassword.setOnClickListener {
             finish()
@@ -80,4 +96,6 @@ class SignInWithOtpActivity : AppCompatActivity() {
 
 
     }
+
+
 }

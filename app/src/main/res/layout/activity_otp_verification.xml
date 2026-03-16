@@ -34,7 +34,7 @@
 
 
     <TextView
-        android:id="@+id/tv_digit_code"
+        android:id="@+id/tv_mobile_number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -56,7 +56,7 @@
         android:textStyle="normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_digit_code" />
+        app:layout_constraintTop_toBottomOf="@id/tv_mobile_number" />
 
     <LinearLayout
         android:id="@+id/layout_otp"
