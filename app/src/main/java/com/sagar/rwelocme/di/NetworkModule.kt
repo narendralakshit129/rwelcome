@@ -15,17 +15,27 @@ import retrofit2.converter.gson.GsonConverterFactory
 object NetworkModule {
 
     @Provides
-    fun provideBaseUrl() = "http://15.206.170.236:4000/api/"
+    fun provideBaseUrl(): String {
+        return "http://15.206.170.236:4000/api/"
+    }
 
     @Provides
-    fun provideRetrofit(baseUrl: String): Retrofit {
+    fun provideOkHttpClient(): OkHttpClient {
 
-        val logging = HttpLoggingInterceptor()
-        logging.level = HttpLoggingInterceptor.Level.BODY
+        val logging = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
 
-        val client = OkHttpClient.Builder()
+        return OkHttpClient.Builder()
             .addInterceptor(logging)
             .build()
+    }
+
+    @Provides
+    fun provideRetrofit(
+        baseUrl: String,
+        client: OkHttpClient
+    ): Retrofit {
 
         return Retrofit.Builder()
             .baseUrl(baseUrl)

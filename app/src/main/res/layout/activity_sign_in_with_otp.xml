@@ -47,13 +47,13 @@
         app:layout_constraintTop_toBottomOf="@id/txt_mobile">
 
         <com.hbb20.CountryCodePicker
-            android:layout_gravity="center"
             android:id="@+id/ccp"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
+            android:layout_gravity="center"
             app:ccp_defaultNameCode="IN"
-            app:ccp_showNameCode="false"
             app:ccp_showFlag="false"
+            app:ccp_showNameCode="false"
             app:ccp_showPhoneCode="true" />
 
         <EditText

@@ -4,6 +4,9 @@ plugins {
     alias(libs.plugins.hilt.android)
     kotlin("kapt")
 }
+hilt {
+    enableAggregatingTask = false
+}
 
 android {
     namespace = "com.sagar.rwelocme"
@@ -66,12 +69,16 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
 
-    implementation(libs.javapoet)
     implementation(libs.okhttp.logging)
-
     implementation(libs.lifecycle.viewmodel)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+}
+
+configurations.configureEach {
+    resolutionStrategy {
+        force("com.squareup:javapoet:1.13.0")
+    }
 }
