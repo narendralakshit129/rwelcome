@@ -2,6 +2,7 @@ package com.sagar.rwelocme.domain.repository
 
 import com.sagar.rwelocme.api.ApiService
 import com.sagar.rwelocme.di.NetworkResult
+import com.sagar.rwelocme.domain.model.Country
 import com.sagar.rwelocme.domain.model.OtpRequest
 import com.sagar.rwelocme.domain.model.OtpResponse
 import com.sagar.rwelocme.domain.model.VerifyOtpRequest
@@ -46,6 +47,22 @@ class AuthRepositoryImpl @Inject constructor(
 
         } catch (e: Exception) {
             NetworkResult.Error(e.message ?: "Network Error")
+        }
+    }
+
+    override suspend fun getCountries(): NetworkResult<List<Country>> {
+
+        return try {
+            val response = api.getCountries()
+
+            if (response.isSuccessful) {
+                NetworkResult.Success(response.body()?.countries ?: emptyList())
+            } else {
+                NetworkResult.Error(response.message())
+            }
+
+        } catch (e: Exception) {
+            NetworkResult.Error(e.message ?: "Error")
         }
     }
 }

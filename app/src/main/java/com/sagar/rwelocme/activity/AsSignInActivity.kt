@@ -48,7 +48,8 @@ class AsSignInActivity : AppCompatActivity() {
         }
 
         btnSignIn.setOnClickListener {
-            val intent = Intent(this@AsSignInActivity, MainActivity::class.java)
+            val intent = Intent(this@AsSignInActivity, CreateAccount::class.java)
+           // val intent = Intent(this@AsSignInActivity, MainActivity::class.java)
             startActivity(intent)
         }
 

@@ -20,10 +20,12 @@ import androidx.lifecycle.lifecycleScope
 import com.sagar.rwelocme.R
 import com.sagar.rwelocme.di.NetworkResult
 import com.sagar.rwelocme.presentation.viewmodel.AuthViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.w3c.dom.Text
 import kotlin.getValue
 
+@AndroidEntryPoint
 class OtpVerificationActivity : AppCompatActivity() {
 
     private lateinit var btnVerifyOtp: Button
@@ -72,10 +74,10 @@ class OtpVerificationActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-          //  viewModel.verifyOtp(mobileNumberValue, otp)
+            viewModel.verifyOtp(mobileNumberValue, otp)
         }
 
-        /*lifecycleScope.launch {
+        lifecycleScope.launch {
             viewModel.otpVerifyState.collect { result ->
 
                 when (result) {
@@ -112,7 +114,7 @@ class OtpVerificationActivity : AppCompatActivity() {
                     }
                 }
             }
-        }*/
+        }
 
 
 
