@@ -21,23 +21,25 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val requestOtpUseCase: RequestOtpUseCase,
     private val verifyOtpUseCase: VerifyOtpUseCase,
-    private val getCountriesUseCase: GetCountriesUseCase
 ) : ViewModel() {
 
     // 🔹 Request OTP
-    private val _otpState = MutableStateFlow<NetworkResult<OtpResponse>>(NetworkResult.Loading())
+    private val _otpState = MutableStateFlow<NetworkResult<OtpResponse>>(NetworkResult.Idle)
     val otpState: StateFlow<NetworkResult<OtpResponse>> = _otpState
 
     fun requestOtp(mobile: String) {
+        if (_otpState.value is NetworkResult.Loading) return
         viewModelScope.launch {
-            _otpState.value = NetworkResult.Loading()
+            _otpState.value = NetworkResult.Loading
             _otpState.value = requestOtpUseCase(mobile)
         }
     }
 
+
+
     // 🔹 Verify OTP
     private val _otpVerifyState =
-        MutableStateFlow<NetworkResult<VerifyOtpResponse>>(NetworkResult.Loading())
+        MutableStateFlow<NetworkResult<VerifyOtpResponse>>(NetworkResult.Idle)
     val otpVerifyState: StateFlow<NetworkResult<VerifyOtpResponse>> =
         _otpVerifyState
 
@@ -46,20 +48,11 @@ class AuthViewModel @Inject constructor(
 
         viewModelScope.launch {
 
-            _otpVerifyState.value = NetworkResult.Loading()
+            _otpVerifyState.value = NetworkResult.Loading
 
             _otpVerifyState.value = verifyOtpUseCase(mobile, otp)
         }
     }
 
 
-    private val _countries = MutableLiveData<NetworkResult<List<Country>>>()
-    val countries: LiveData<NetworkResult<List<Country>>> = _countries
-
-    fun getCountries() {
-        viewModelScope.launch {
-            _countries.value = NetworkResult.Loading()
-            _countries.value = getCountriesUseCase()
-        }
-    }
 }

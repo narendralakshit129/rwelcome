@@ -6,17 +6,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:padding="24dp"
-    tools:context=".activity.CreateAccount">
+    android:paddingHorizontal="18dp"
+    android:paddingTop="26dp"
+    android:paddingBottom="16dp"
+    tools:context=".activity.CreateFamilyActivity">
 
     <ImageView
         android:id="@+id/iv_back"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:contentDescription="Back"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:contentDescription="@string/back"
         android:src="@drawable/back_arrow"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 
     <!-- Title -->
     <TextView
@@ -24,19 +27,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/txt_create_account"
+        android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="normal"
-        app:layout_constraintBottom_toBottomOf="@id/ivBack"
+        app:layout_constraintBottom_toBottomOf="@id/iv_back"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/ivBack" />
+        app:layout_constraintTop_toTopOf="@id/iv_back" />
 
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/ivProfile"
         android:layout_width="110dp"
         android:layout_height="110dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="20dp"
         android:background="@color/colorGrayhint"
         android:scaleType="centerCrop"
         android:src="@drawable/add_symbol"
@@ -108,13 +112,13 @@
         <ImageView
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/outline_person_24"/>
+            android:src="@drawable/female_girl_icon"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Female"
-            android:textColor="#2979FF"
+            android:textColor="@color/black"
             android:layout_marginTop="8dp"/>
     </LinearLayout>
 
@@ -134,13 +138,13 @@
         <ImageView
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/outline_person_24"/>
+            android:src="@drawable/male_boy_icon"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Male"
-            android:textColor="#2979FF"
+            android:textColor="@color/black"
             android:layout_marginTop="8dp"/>
     </LinearLayout>
 
@@ -237,18 +241,16 @@
         app:layout_constraintTop_toBottomOf="@id/llFemale" />
 
     <TextView
-        android:gravity="center|start"
         android:id="@+id/tvNationality"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="India"
-        android:drawableEnd="@drawable/ic_arrow_down"
         android:background="@drawable/bg_otp"
-        app:layout_constraintTop_toBottomOf="@id/txt_nationality"
+        android:drawableEnd="@drawable/ic_arrow_down"
+        android:gravity="center|start"
+        android:text="India"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-
+        app:layout_constraintTop_toBottomOf="@id/txt_nationality" />
 
 
     <TextView

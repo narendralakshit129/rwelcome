@@ -1,27 +1,54 @@
 package com.sagar.rwelocme.activity
 
+import android.Manifest
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.sagar.rwelocme.MainActivity
 import com.sagar.rwelocme.R
-import com.sagar.rwelocme.di.NetworkResult
-import com.sagar.rwelocme.presentation.viewmodel.AuthViewModel
+import com.sagar.rwelocme.callback.OnOptionClickListener
+import com.sagar.rwelocme.comman.Gender
+import com.sagar.rwelocme.dialog.GalleryCameraBottomSheet
+import com.sagar.rwelocme.presentation.viewmodel.UpdateProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import java.io.File
 
 @AndroidEntryPoint
-class CreateAccount : AppCompatActivity() {
+class CreateAccount : AppCompatActivity() , OnOptionClickListener {
+
+    private lateinit var ivProfile: ImageView
+    private lateinit var tvNationality: TextView
+    private lateinit var llMale: LinearLayout
+    private lateinit var llFemale: LinearLayout
+    private lateinit var tvMale: TextView
+    private lateinit var tvFemale: TextView
+    private lateinit var ivMale: ImageView
+    private lateinit var ivFemale: ImageView
 
     private lateinit var btnCreateProfile: Button
     private lateinit var ivBack: ImageView
-    private lateinit var ivProfile: ImageView
-    private val viewModel: AuthViewModel by viewModels()
+
+    private val viewModel: UpdateProfileViewModel by viewModels()
+    private var imageUri: Uri? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,52 +56,222 @@ class CreateAccount : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_create_account)
 
+        initViews()
+        setupClicks()
+        observeState()
+
         viewModel.getCountries()
 
-        btnCreateProfile = findViewById(R.id.btn_create_profile)
+    }
+
+    private fun initViews() {
+
         ivBack = findViewById(R.id.iv_back)
+
         ivProfile = findViewById(R.id.ivProfile)
+        tvNationality = findViewById(R.id.tvNationality)
 
-        btnCreateProfile.setOnClickListener {
+        llMale = findViewById(R.id.llMale)
+        llFemale = findViewById(R.id.llFemale)
 
-            // startActivity(Intent(this@OtpVerificationActivity, CreatePassword::class.java))
-            finish()
+        ivMale = llMale.getChildAt(0) as ImageView
+        tvMale = llMale.getChildAt(1) as TextView
 
-        }
+        ivFemale = llFemale.getChildAt(0) as ImageView
+        tvFemale = llFemale.getChildAt(1) as TextView
+
+        btnCreateProfile = findViewById(R.id.btn_create_profile)
+
+    }
+
+    private fun setupClicks() {
 
         ivBack.setOnClickListener {
-
-            // startActivity(Intent(this@ForgotPassword, AsSignInActivity::class.java))
             finish()
         }
 
+        ivProfile.setOnClickListener {
+            val sheet = GalleryCameraBottomSheet()
+            sheet.listener = this
+            sheet.show(supportFragmentManager, "sheet")
+        }
 
-        viewModel.countries.observe(this) {
+        llMale.setOnClickListener {
+            viewModel.selectGender(Gender.MALE)
+        }
 
-            when (it) {
+        llFemale.setOnClickListener {
+            viewModel.selectGender(Gender.FEMALE)
+        }
 
-                is NetworkResult.Success -> {
-                    val list = it.data
-                    list?.forEach {
-                        Log.d("COUNTRY", it.name)
+        tvNationality.setOnClickListener {
+            showCountryDialog(viewModel.uiState.value.countries)
+        }
+
+        btnCreateProfile.setOnClickListener {
+            // startActivity(Intent(this@OtpVerificationActivity, CreatePassword::class.java))
+            startActivity(Intent(this@CreateAccount, MainActivity::class.java))
+            finish()
+
+        }
+    }
+
+    private fun observeState() {
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    // UI update
+                    // Country
+                    tvNationality.text =
+                        if (state.selectedCountry.isEmpty())
+                            "Select nationality"
+                        else state.selectedCountry
+
+                    // Gender UI
+                    updateGenderUI(state.selectedGender)
+
+                    // Image
+                    state.imageUri?.let {
+                        ivProfile.setImageURI(it)
+                        var file =  uriToFile(this@CreateAccount,it)
+                        viewModel.uploadImage(file)
                     }
-                }
 
-                is NetworkResult.Error -> {
-                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
-                }
-
-                is NetworkResult.Loading -> {
-                    // show loader
+                    // Error
+                    state.error?.let {
+                        Toast.makeText(this@CreateAccount, it, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
 
-
-       /* ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }*/
     }
+
+
+    private fun updateGenderUI(gender: Gender?) {
+
+        val selectedColor = Color.parseColor("#00B0FF")
+        val defaultColor = Color.BLACK
+
+        val isMale = gender == Gender.MALE
+
+        llMale.setBackgroundResource(
+            if (isMale) R.drawable.bg_gender_selected else R.drawable.bg_gender_card
+        )
+
+        llFemale.setBackgroundResource(
+            if (gender == Gender.FEMALE) R.drawable.bg_gender_selected else R.drawable.bg_gender_card
+        )
+
+        tvMale.setTextColor(if (isMale) selectedColor else defaultColor)
+        tvFemale.setTextColor(if (gender == Gender.FEMALE) selectedColor else defaultColor)
+
+        ivMale.setColorFilter(if (isMale) selectedColor else defaultColor)
+        ivFemale.setColorFilter(if (gender == Gender.FEMALE) selectedColor else defaultColor)
+    }
+
+    private fun showCountryDialog(countries: List<String>) {
+
+        val list = listOf("Select nationality") + countries
+
+        AlertDialog.Builder(this)
+            .setTitle("Select Nationality")
+            .setItems(list.toTypedArray()) { _, which ->
+                if (which != 0) {
+                    viewModel.selectCountry(list[which])
+                }
+            }
+            .show()
+    }
+
+    // 🖼️ Gallery result
+    private val galleryLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            uri?.let { viewModel.setImage(it) }
+        }
+
+    // 📸 Camera result
+    private val cameraLauncher =
+        registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            if (success && imageUri != null) {
+                viewModel.setImage(imageUri!!)
+            }
+        }
+
+
+
+    // 🔐 Camera permission
+    private val permissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            if (it) openCamera()
+            else Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
+        }
+
+
+    override fun onCameraClick() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            openCamera()
+        } else {
+            permissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+
+    override fun onGalleryClick() {
+        galleryLauncher.launch("image/*")
+    }
+
+    private fun openCamera() {
+        imageUri = createImageUri()
+        cameraLauncher.launch(imageUri!!)
+    }
+
+
+    private fun createImageUri(): Uri {
+        val file = File(cacheDir, "camera.jpg")
+        return FileProvider.getUriForFile(
+            this,
+            "$packageName.provider",
+            file
+        )
+    }
+
+    fun uriToFile(context: Context, uri: Uri): File {
+        val contentResolver = context.contentResolver
+
+        val fileName = getFileName(context, uri) ?: "temp_file"
+        val file = File(context.cacheDir, fileName)
+
+        val inputStream = contentResolver.openInputStream(uri)
+        val outputStream = file.outputStream()
+
+        inputStream?.use { input ->
+            outputStream.use { output ->
+                input.copyTo(output)
+            }
+        }
+
+        return file
+    }
+
+    fun getFileName(context: Context, uri: Uri): String? {
+        var name: String? = null
+
+        val cursor = context.contentResolver.query(uri, null, null, null, null)
+
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val index = it.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+                if (index != -1) {
+                    name = it.getString(index)
+                }
+            }
+        }
+
+        return name
+    }
+
+
 }
