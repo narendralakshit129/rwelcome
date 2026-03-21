@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sagar.rwelocme.di.NetworkResult
-import com.sagar.rwelocme.domain.model.Country
 import com.sagar.rwelocme.domain.model.OtpResponse
 import com.sagar.rwelocme.domain.model.VerifyOtpResponse
 import com.sagar.rwelocme.domain.usecase.GetCountriesUseCase

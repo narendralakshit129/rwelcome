@@ -1,5 +1,6 @@
 package com.sagar.rwelocme.activity
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -170,7 +171,7 @@ class OtpVerificationActivity : AppCompatActivity() {
                                 storePref.setUserMobile(response.user.mobile ?: "")
                                 storePref.setUserName(response.user.firstName ?: "")
                             }
-                            navigateToScreen()
+                            navigateToScreen(response.user.firstName ?: "")
                         }
 
                         is NetworkResult.Error -> {
@@ -200,20 +201,30 @@ class OtpVerificationActivity : AppCompatActivity() {
         Toast.makeText(this, message ?: "Something went wrong", Toast.LENGTH_SHORT).show()
     }
 
-    private fun navigateToScreen() {
+    private fun navigateToScreen(userName:String) {
         when (comingFrom) {
             "FORGOT_PASSWORD" -> {
                 startActivity(Intent(this, CreatePassword::class.java))
             }
             "SIGN_IN_OTP" -> {
-                if(storePref.getUserName.toString() == ""){
+                if(userName.isEmpty()){
                     startActivity(Intent(this, CreateAccount::class.java))
                 }else{
-                    startActivity(Intent(this, MainActivity::class.java))
+                    lifecycleScope.launch {
+                        storePref.setLoginStatus(true)
+                    }
+
+                    val intent = Intent(this, MainActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    }
+                    startActivity(intent)
+
                 }
             }
         }
         finish()
     }
+
+
 
 }

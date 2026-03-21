@@ -11,15 +11,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
+import com.sagar.rwelocme.MainActivity
 import com.sagar.rwelocme.R
+import com.sagar.rwelocme.Utils.StorePref
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @SuppressLint("CustomSplashScreen")
+@AndroidEntryPoint
 class AsSplashActivity : AppCompatActivity() {
 
     private var keepSplash  = false
-
+    @Inject
+    lateinit var storePref: StorePref
     override fun onCreate(savedInstanceState: Bundle?) {
 
         val splash = installSplashScreen()
@@ -33,8 +39,14 @@ class AsSplashActivity : AppCompatActivity() {
         lifecycleScope.launch {
             delay(2000)
             keepSplash = false
-            startActivity(Intent(this@AsSplashActivity, AsSignInActivity::class.java))
-            finish()
+            val isLoggedIn = storePref.isLoginStatus() // ✅ call suspend function
+            if (isLoggedIn) {
+                startActivity(Intent(this@AsSplashActivity, MainActivity::class.java))
+                finish()
+            }else {
+                startActivity(Intent(this@AsSplashActivity, AsSignInActivity::class.java))
+                finish()
+            }
         }
     }
 

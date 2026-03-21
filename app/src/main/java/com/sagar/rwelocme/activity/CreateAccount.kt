@@ -7,7 +7,9 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -24,18 +26,26 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.sagar.rwelocme.MainActivity
 import com.sagar.rwelocme.R
+import com.sagar.rwelocme.Utils.StorePref
 import com.sagar.rwelocme.callback.OnOptionClickListener
 import com.sagar.rwelocme.comman.Gender
+import com.sagar.rwelocme.di.NetworkResult
 import com.sagar.rwelocme.dialog.GalleryCameraBottomSheet
+import com.sagar.rwelocme.domain.model.Country
+import com.sagar.rwelocme.presentation.ui.state.CreateAccountUiState
 import com.sagar.rwelocme.presentation.viewmodel.UpdateProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.io.File
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class CreateAccount : AppCompatActivity() , OnOptionClickListener {
 
     private lateinit var ivProfile: ImageView
+    private lateinit var etFirstName: EditText
+    private lateinit var etLastName: EditText
     private lateinit var tvNationality: TextView
     private lateinit var llMale: LinearLayout
     private lateinit var llFemale: LinearLayout
@@ -43,12 +53,19 @@ class CreateAccount : AppCompatActivity() , OnOptionClickListener {
     private lateinit var tvFemale: TextView
     private lateinit var ivMale: ImageView
     private lateinit var ivFemale: ImageView
+    private lateinit var etYourBio: EditText
 
     private lateinit var btnCreateProfile: Button
     private lateinit var ivBack: ImageView
 
     private val viewModel: UpdateProfileViewModel by viewModels()
     private var imageUri: Uri? = null
+    private var imageKey: String = ""
+
+    private var currentState: CreateAccountUiState? = null
+
+    @Inject
+    lateinit var pref: StorePref
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,6 +86,9 @@ class CreateAccount : AppCompatActivity() , OnOptionClickListener {
         ivBack = findViewById(R.id.iv_back)
 
         ivProfile = findViewById(R.id.ivProfile)
+        etFirstName = findViewById(R.id.et_full_name)
+        etLastName = findViewById(R.id.et_last_name)
+        etYourBio = findViewById(R.id.et_tilBio)
         tvNationality = findViewById(R.id.tvNationality)
 
         llMale = findViewById(R.id.llMale)
@@ -97,11 +117,11 @@ class CreateAccount : AppCompatActivity() , OnOptionClickListener {
         }
 
         llMale.setOnClickListener {
-            viewModel.selectGender(Gender.MALE)
+            viewModel.selectGender(Gender.male)
         }
 
         llFemale.setOnClickListener {
-            viewModel.selectGender(Gender.FEMALE)
+            viewModel.selectGender(Gender.female)
         }
 
         tvNationality.setOnClickListener {
@@ -109,9 +129,43 @@ class CreateAccount : AppCompatActivity() , OnOptionClickListener {
         }
 
         btnCreateProfile.setOnClickListener {
+
+
+            val state = currentState ?: return@setOnClickListener
+            lifecycleScope.launch {
+                val token = pref.getUserToken()   // get token value
+                Log.d("API", "token: ${token}")
+                val countryId = state.selectedCountryId
+                val countryName = state.selectedCountry
+                val code = state.selectedCountryCode
+                val gender = state.selectedGender
+
+
+                var profileImage = imageKey
+                var firstName = etFirstName.text.toString()
+                var lastName = etLastName.text.toString()
+                var address = ""
+                var displayName = firstName + " " + lastName
+                var bio = etYourBio.text.toString()
+
+                viewModel.createProfile(
+                    profileImage,
+                    firstName,
+                    lastName,
+                    address,
+                    displayName,
+                    gender,
+                    countryId,
+                    bio,
+                    token
+                )
+
+            }
+
+
             // startActivity(Intent(this@OtpVerificationActivity, CreatePassword::class.java))
-            startActivity(Intent(this@CreateAccount, MainActivity::class.java))
-            finish()
+       //     startActivity(Intent(this@CreateAccount, MainActivity::class.java))
+      //      finish()
 
         }
     }
@@ -134,13 +188,104 @@ class CreateAccount : AppCompatActivity() , OnOptionClickListener {
                     // Image
                     state.imageUri?.let {
                         ivProfile.setImageURI(it)
-                        var file =  uriToFile(this@CreateAccount,it)
-                        viewModel.uploadImage(file)
+                        // var file =  uriToFile(this@CreateAccount,it)
+                        // viewModel.uploadImage(file)
                     }
 
                     // Error
                     state.error?.let {
                         Toast.makeText(this@CreateAccount, it, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+
+
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+
+                viewModel.uploadState.collect { result ->
+                    when (result) {
+                        is NetworkResult.Loading -> {
+                            Toast.makeText(this@CreateAccount, "Uploading...", Toast.LENGTH_SHORT).show()
+                        }
+
+                        is NetworkResult.Success -> {
+                            Toast.makeText(this@CreateAccount, "Upload Successful", Toast.LENGTH_SHORT).show()
+                            val data = result.data
+                            imageKey = data?.key ?: ""
+
+                            println("Uploaded image url: ${data?.url}")
+                            println("Uploaded image url: ${data?.key}")
+                            // Navigate to next screen
+                        //    startActivity(Intent(this@CreateAccount, MainActivity::class.java))
+                         //   finish()
+                        }
+
+                        is NetworkResult.Error -> {
+                            Toast.makeText(
+                                this@CreateAccount,
+                                result.message ?: "Upload Failed",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                        else -> {}
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    currentState = state
+                }
+            }
+        }
+
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+
+                viewModel.uploadProfileState.collect { result ->
+                    when (result) {
+                        is NetworkResult.Loading -> {
+                            Toast.makeText(this@CreateAccount, "Uploading...", Toast.LENGTH_SHORT).show()
+                        }
+
+                        is NetworkResult.Success -> {
+                            Toast.makeText(this@CreateAccount, "Upload Successful", Toast.LENGTH_SHORT).show()
+                            val response = result.data
+                            lifecycleScope.launch {
+
+                                pref.setUserId(response.id.toString())
+                                pref.setUserEmail(response.email ?: "")
+                                pref.setUserMobile(response.mobile ?: "")
+                                pref.setUserName(response.firstName ?: "")
+                                pref.setUserLastName(response.lastName ?: "")
+                                pref.setUserDisplayName(response.displayName ?: "")
+                                pref.setUserGender(response.gender ?: "")
+                                pref.setUserCountryId(""+response.countryId ?: "")
+                                pref.setUserBio(response.bio ?: "")
+                                pref.setUserAddress(response.address ?: "")
+                                pref.setUserProfileImage(response.profileImage ?: "")
+                                pref.setLoginStatus(true)
+                                startActivity(Intent(this@CreateAccount, MainActivity::class.java))
+                                finish()
+                            }
+                        }
+
+                        is NetworkResult.Error -> {
+                            Toast.makeText(
+                                this@CreateAccount,
+                                result.message ?: "Upload Failed",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                        else -> {}
                     }
                 }
             }
@@ -154,32 +299,39 @@ class CreateAccount : AppCompatActivity() , OnOptionClickListener {
         val selectedColor = Color.parseColor("#00B0FF")
         val defaultColor = Color.BLACK
 
-        val isMale = gender == Gender.MALE
+        val isMale = gender == Gender.male
 
         llMale.setBackgroundResource(
             if (isMale) R.drawable.bg_gender_selected else R.drawable.bg_gender_card
         )
 
         llFemale.setBackgroundResource(
-            if (gender == Gender.FEMALE) R.drawable.bg_gender_selected else R.drawable.bg_gender_card
+            if (gender == Gender.female) R.drawable.bg_gender_selected else R.drawable.bg_gender_card
         )
 
         tvMale.setTextColor(if (isMale) selectedColor else defaultColor)
-        tvFemale.setTextColor(if (gender == Gender.FEMALE) selectedColor else defaultColor)
+        tvFemale.setTextColor(if (gender == Gender.female) selectedColor else defaultColor)
 
         ivMale.setColorFilter(if (isMale) selectedColor else defaultColor)
-        ivFemale.setColorFilter(if (gender == Gender.FEMALE) selectedColor else defaultColor)
+        ivFemale.setColorFilter(if (gender == Gender.female) selectedColor else defaultColor)
     }
 
-    private fun showCountryDialog(countries: List<String>) {
+    private fun showCountryDialog(countries: List<Country>) {
 
-        val list = listOf("Select nationality") + countries
+        val list = listOf("Select nationality") + countries.map {
+            "${it.name} (${it.code})"
+        }
 
         AlertDialog.Builder(this)
             .setTitle("Select Nationality")
             .setItems(list.toTypedArray()) { _, which ->
                 if (which != 0) {
-                    viewModel.selectCountry(list[which])
+                    val selectedCountry = countries[which - 1]
+                    viewModel.selectCountry(
+                        selectedCountry.id,
+                        selectedCountry.name,
+                        selectedCountry.code   // 👈 passing code
+                    )
                 }
             }
             .show()
@@ -188,7 +340,16 @@ class CreateAccount : AppCompatActivity() , OnOptionClickListener {
     // 🖼️ Gallery result
     private val galleryLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            uri?.let { viewModel.setImage(it) }
+
+            uri?.let {
+                ivProfile.setImageURI(it)
+                val file = uriToFile(this, it)
+                lifecycleScope.launch {
+                    val token = pref.getUserToken()   // get token value
+                    Log.d("API", "token: ${token}")
+                    viewModel.uploadImage(file, token)
+                }
+            }
         }
 
     // 📸 Camera result
@@ -196,6 +357,12 @@ class CreateAccount : AppCompatActivity() , OnOptionClickListener {
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
             if (success && imageUri != null) {
                 viewModel.setImage(imageUri!!)
+                val file = uriToFile(this, imageUri!!)
+                lifecycleScope.launch {
+                    val token = pref.getUserToken()   // get token value
+                    Log.d("API", "token: ${token}")
+                    viewModel.uploadImage(file, token)
+                }
             }
         }
 

@@ -1,12 +1,13 @@
 package com.sagar.rwelocme.presentation.viewmodel
 
-import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sagar.rwelocme.comman.Gender
 import com.sagar.rwelocme.di.NetworkResult
+import com.sagar.rwelocme.domain.model.ProfileRequest
 import com.sagar.rwelocme.domain.model.UploadProfileResponse
+import com.sagar.rwelocme.domain.model.UserProfileResponse
 import com.sagar.rwelocme.domain.repository.UploadProfileRepository
 import com.sagar.rwelocme.domain.usecase.GetCountriesUseCase
 import com.sagar.rwelocme.presentation.ui.state.CreateAccountUiState
@@ -42,7 +43,8 @@ class UpdateProfileViewModel @Inject constructor(
                 }
 
                 is NetworkResult.Success -> {
-                    val list = result.data?.map { it.name } ?: emptyList()
+                   // val list = result.data?.map { it.name } ?: emptyList()
+                    val list = result.data ?: emptyList()
 
                     _uiState.update {
                         it.copy(
@@ -72,8 +74,15 @@ class UpdateProfileViewModel @Inject constructor(
         _uiState.update { it.copy(selectedGender = gender) }
     }
 
-    fun selectCountry(country: String) {
-        _uiState.update { it.copy(selectedCountry = country) }
+
+    fun selectCountry(id: Int, countryName: String, countryCode: String) {
+        _uiState.update {
+            it.copy(
+                selectedCountry = countryName,
+                selectedCountryId = id,
+                selectedCountryCode = countryCode
+            )
+        }
     }
 
     fun setImage(uri: Uri) {
@@ -81,17 +90,51 @@ class UpdateProfileViewModel @Inject constructor(
     }
 
 
-    private val _uploadState =
-        MutableStateFlow<NetworkResult<UploadProfileResponse>>(NetworkResult.Idle)
+    private val _uploadState = MutableStateFlow<NetworkResult<UploadProfileResponse>>(NetworkResult.Idle)
     val uploadState: StateFlow<NetworkResult<UploadProfileResponse>> = _uploadState
 
-    fun uploadImage(file: File) {
+    fun uploadImage(file: File, token: String) {
         viewModelScope.launch {
             _uploadState.value = NetworkResult.Loading
-            _uploadState.value = repository.uploadImage(file)
+            _uploadState.value = repository.uploadImage(file, token)
         }
     }
 
+
+    private val _uploadProfileState = MutableStateFlow<NetworkResult<UserProfileResponse>>(NetworkResult.Idle)
+    val uploadProfileState: StateFlow<NetworkResult<UserProfileResponse>> = _uploadProfileState
+
+    fun createProfile(
+        profileImage: String,
+        firstName: String,
+        lastName: String,
+        address: String,
+        displayName: String,
+        gender: Gender?,
+        countryId: Int,
+        bio: String,
+        token: String
+    ) {
+        viewModelScope.launch {
+            _uploadProfileState.value = NetworkResult.Loading
+
+            val result = repository.uploadProfile(
+                ProfileRequest(
+                    profileImage,
+                    firstName,
+                    lastName,
+                    address,
+                    displayName,
+                    gender.toString(),
+                    countryId,
+                    bio
+                ),
+                token
+            )
+
+            _uploadProfileState.value = result
+        }
+    }
 
 
 }
