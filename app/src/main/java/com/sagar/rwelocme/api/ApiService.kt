@@ -37,14 +37,14 @@ interface ApiService {
     @POST("uploads/file")
     suspend fun uploadImage(
         @Part file: MultipartBody.Part,
-        @Header("x-api-key") apiKey: String,
+      //  @Header("x-api-key") apiKey: String,
         @Header("Authorization") token: String
     ): Response<UploadProfileResponse>
 
     @PUT("profile")
     suspend fun updateProfile(
         @Body request: ProfileRequest,
-        @Header("x-api-key") apiKey: String,
+      //  @Header("x-api-key") apiKey: String,
         @Header("Authorization") token: String
     ): Response<UserProfileResponse>
 
