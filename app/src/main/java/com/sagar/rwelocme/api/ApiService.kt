@@ -21,17 +21,21 @@ import retrofit2.http.Part
 interface ApiService {
     @POST("auth/otp/request")
     suspend fun requestOtp(
+        @Header("x-api-key") apiKey: String,
         @Body request: OtpRequest
     ): Response<OtpResponse>
 
 
     @POST("auth/otp/verify")
     suspend fun verifyOtp(
+        @Header("x-api-key") apiKey: String,
         @Body request: VerifyOtpRequest
     ): Response<VerifyOtpResponse>
 
     @GET("countries")
-    suspend fun getCountries(): Response<CountriesResponse>
+    suspend fun getCountries(
+        @Header("x-api-key") apiKey: String,
+    ): Response<CountriesResponse>
 
     @Multipart
     @POST("uploads/file")

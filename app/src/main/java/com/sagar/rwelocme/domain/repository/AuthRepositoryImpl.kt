@@ -16,8 +16,8 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun requestOtp(mobile: String): NetworkResult<OtpResponse> {
 
         return try {
-
-            val response = api.requestOtp(OtpRequest(mobile))
+            var apiKey = "sk_live_aaecfebe1c4baab87a1eba0a608f4439e6f85a2e0a18f206"
+            val response = api.requestOtp(apiKey,OtpRequest(mobile))
 
             if (response.isSuccessful) {
 
@@ -37,7 +37,8 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun verifyOtp(request: VerifyOtpRequest): NetworkResult<VerifyOtpResponse> {
 
         return try {
-            val response = api.verifyOtp(request)
+            var apiKey = "sk_live_aaecfebe1c4baab87a1eba0a608f4439e6f85a2e0a18f206"
+            val response = api.verifyOtp(apiKey,request)
 
             if (response.isSuccessful && response.body() != null) {
                 NetworkResult.Success(response.body()!!)
@@ -53,7 +54,8 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun getCountries(): NetworkResult<List<Country>> {
 
         return try {
-            val response = api.getCountries()
+            var apiKey = "sk_live_aaecfebe1c4baab87a1eba0a608f4439e6f85a2e0a18f206"
+            val response = api.getCountries(apiKey)
 
             if (response.isSuccessful) {
                 NetworkResult.Success(response.body()?.countries ?: emptyList())
