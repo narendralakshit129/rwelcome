@@ -25,9 +25,8 @@ class UploadProfileRepository  @Inject constructor(
                 file.name,
                 requestFile
             )
-         //   var apiKey = "sk_live_aaecfebe1c4baab87a1eba0a608f4439e6f85a2e0a18f206"
-          //  val response = api.uploadImage(body, apiKey,token)
-            val response = api.uploadImage(body, token)
+            var apiKey = "sk_live_aaecfebe1c4baab87a1eba0a608f4439e6f85a2e0a18f206"
+            val response = api.uploadImage(body, apiKey,token)
 
             if (response.isSuccessful && response.body() != null) {
                 NetworkResult.Success(response.body()!!)
@@ -45,10 +44,10 @@ class UploadProfileRepository  @Inject constructor(
     suspend fun uploadProfile(profileRequest: ProfileRequest, token: String): NetworkResult<UserProfileResponse> {
         return try {
 
-           //  var apiKey = "sk_live_aaecfebe1c4baab87a1eba0a608f4439e6f85a2e0a18f206"
-           // val response = api.updateProfile(profileRequest, apiKey, "Bearer $token" // ✅ FIX)
+             var apiKey = "sk_live_aaecfebe1c4baab87a1eba0a608f4439e6f85a2e0a18f206"
             val response = api.updateProfile(
                 profileRequest,
+                apiKey,
                 "Bearer $token" // ✅ FIX
             )
 
