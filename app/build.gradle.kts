@@ -76,6 +76,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.datastore.preferences)
+    implementation("androidx.fragment:fragment-ktx:1.6.2")
 }
 
 configurations.configureEach {

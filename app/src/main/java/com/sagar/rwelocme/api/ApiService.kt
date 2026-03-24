@@ -1,5 +1,6 @@
 package com.sagar.rwelocme.api
 
+import com.google.gson.JsonObject
 import com.sagar.rwelocme.domain.model.CountriesResponse
 import com.sagar.rwelocme.domain.model.OtpRequest
 import com.sagar.rwelocme.domain.model.OtpResponse
@@ -8,6 +9,7 @@ import com.sagar.rwelocme.domain.model.UploadProfileResponse
 import com.sagar.rwelocme.domain.model.UserProfileResponse
 import com.sagar.rwelocme.domain.model.VerifyOtpRequest
 import com.sagar.rwelocme.domain.model.VerifyOtpResponse
+import com.sagar.rwelocme.model.network_response.RoomsResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -52,5 +54,16 @@ interface ApiService {
         @Header("Authorization") token: String
     ): Response<UserProfileResponse>
 
+    @POST("/api/chat/rooms")
+    suspend fun createRoom(
+        @Header("x-api-key") apiKey: String,
+        @Header("Authorization") token: String,
+        @Body request: JsonObject
+    ): Response<Any>
 
+    @GET("chat/rooms")
+    suspend fun getRooms(
+        @Header("x-api-key") apiKey: String,
+        @Header("Authorization") token: String
+    ): Response<RoomsResponse>
 }

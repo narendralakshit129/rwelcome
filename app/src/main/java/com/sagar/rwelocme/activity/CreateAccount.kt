@@ -144,8 +144,8 @@ class CreateAccount : AppCompatActivity() , OnOptionClickListener {
                 var profileImage = imageKey
                 var firstName = etFirstName.text.toString()
                 var lastName = etLastName.text.toString()
-                var address = ""
-                var displayName = firstName + " " + lastName
+                var address = "New Delhi 1122003"
+                var displayName = "$firstName $lastName"
                 var bio = etYourBio.text.toString()
 
                 viewModel.createProfile(

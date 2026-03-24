@@ -18,7 +18,9 @@ import com.sagar.rwelocme.fragment.AsHomeFragment
 import com.sagar.rwelocme.fragment.AsMeProfileFragment
 import com.sagar.rwelocme.fragment.AsPostFragment
 import com.sagar.rwelocme.fragment.AsRoomFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     lateinit var iconHome: ImageView
